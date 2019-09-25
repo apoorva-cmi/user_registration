@@ -29,17 +29,25 @@ RSpec.describe UsersController, type: :controller do
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    { email: "john_smith@example.com", password: "11111111", password_confirmation: "11111111", username: "abcde"}
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {email: "john_smith@example.com"}
   }
+
+  before(:each) do
+    @user = FactoryBot.create(:user)
+  end
+
+  after(:each) do
+    User.delete_all
+  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # UsersController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
+  let(:valid_session) { { user_id: @user.id } }
 
   describe "GET #index" do
     it "returns a success response" do
@@ -94,22 +102,22 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe "PUT #update" do
+  describe "PATCH #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        { email: "john_smith2@example.com" }
       }
 
       it "updates the requested user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: new_attributes}, session: valid_session
+        patch :update, params: {id: user.to_param, user: new_attributes}, session: valid_session
         user.reload
-        skip("Add assertions for updated state")
+        expect(response).to be_successful
       end
 
       it "redirects to the user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: valid_attributes}, session: valid_session
+        patch :update, params: {id: user.to_param, user: valid_attributes}, session: valid_session
         expect(response).to redirect_to(user)
       end
     end
@@ -117,10 +125,10 @@ RSpec.describe UsersController, type: :controller do
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: invalid_attributes}, session: valid_session
+        patch :update, params: {id: user.to_param, user: invalid_attributes}, session: valid_session
         expect(response).to be_successful
       end
-    end
+    end 
   end
 
   describe "DELETE #destroy" do
