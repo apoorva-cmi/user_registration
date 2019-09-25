@@ -5,7 +5,7 @@ default: &default
 
 development: &development
   <<: *default
-  database: user_registartion_development
+  database: user_registration_development
   host: localhost
   username: postgres
   password:
