@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_secure_password
 
+  attr_accessor :skip_validation_for_username
+
   # Callbacks
   before_create :set_username
   after_create :send_successful_registration_email
@@ -11,11 +13,20 @@ class User < ApplicationRecord
     message: 'Only valid emails allowed'
   }
 
-  validates :password_confirmation, presence: true, on: :create
-  validates :password, confirmation: true, presence: true,
-                       length: { minimum: 8 }, on: :create
+  validates :password_confirmation, presence: true
+  validates :password, confirmation: true, presence: true, length: { minimum: 8 }
 
-  validates :username, length: { minimum: 5 }, on: :update
+  validates :username, length: { minimum: 5 }, on: :update, unless: :skip_validation_for_username
+
+	def send_password_reset
+	  self.update_column(:password_reset_token, generate_token)
+	  self.update_column(:password_reset_sent_at, Time.zone.now)
+	  UserMailer.password_reset(self).deliver_now
+	end
+
+	def generate_token
+    SecureRandom.urlsafe_base64
+  end
 
   private
 
