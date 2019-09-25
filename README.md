@@ -2,7 +2,7 @@
 
 Run the following commands to setup the application:
 
-1. git clone git@github.com:apoorva-cmi/user_registration.git
+1. Clone the project
 
 2. bundle install
 
